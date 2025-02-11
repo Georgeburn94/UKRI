@@ -43,10 +43,33 @@ scene.add(pointLight, ambientLight);
 
 // const controls = new OrbitControls(camera, renderer.domElement);
 
+const vertexShader = `
+  varying vec3 vNormal;
+  void main() {
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  varying vec3 vNormal;
+  void main() {
+    float intensity = pow(0.9 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+    vec3 glow = vec3(1.0, 1.0, 1.0) * intensity;
+    gl_FragColor = vec4(glow, 1.0); // Set alpha to 1.0 to make stars opaque
+  }
+`;
+
+const starMaterial = new THREE.ShaderMaterial({
+  vertexShader,
+  fragmentShader,
+  blending: THREE.AdditiveBlending,
+  transparent: false, // Set transparent to false to make stars opaque
+});
+
 function addStar() {
   const geometry = new THREE.SphereGeometry(0.25, 24, 24);
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff });
-  const star = new THREE.Mesh(geometry, material);
+  const star = new THREE.Mesh(geometry, starMaterial);
 
   const [x, y, z] = Array(3)
     .fill()
@@ -67,7 +90,10 @@ scene.background = spaceTexture;
 
 const jeffTexture = new THREE.TextureLoader().load('UKRI_Horizontal_RGB.png');
 
-const jeff = new THREE.Mesh(new THREE.BoxGeometry(3.391, 1, 1), new THREE.MeshBasicMaterial({ map: jeffTexture }));
+const jeff = new THREE.Mesh(
+  new THREE.BoxGeometry(3.391, 1, 1),
+  new THREE.MeshBasicMaterial({ map: jeffTexture }) // Use MeshBasicMaterial
+);
 
 scene.add(jeff);
 
