@@ -77,6 +77,22 @@ canvas {
     margin-bottom: 0.5rem;
   }
 
+  blockquote h4 {
+    color: black;
+    background-color: white;
+    font-size: 4rem;
+    display: inline;
+    margin-bottom: 1rem;
+  }
+
+  blockquote h5 {
+    color: black;
+    background-color: white;
+    font-size: 3rem;
+    display: inline;
+    margin: 0;
+  }
+
   .left {
     grid-column: 6 / 12;
   }
